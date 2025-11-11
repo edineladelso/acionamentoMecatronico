@@ -1,10 +1,10 @@
 // --- Sistema de comando estrela-triângulo com botão de emergência ---
-// Autor: Edinel Marinho
-// Data: 2025
+// Autor: Edinel Mário Adelso
+// Data: Novembro de 2025
 
 // Pinos de entrada
 const int botaoStart = 2;
-const int botaoStop  = 3;
+const int botaoDesliga = 3;
 const int botaoEmerg = 4;   // Botão de emergência (NC)
 
 // Pinos de saída
@@ -25,7 +25,7 @@ unsigned long tempoInicio = 0;
 
 void setup() {
   pinMode(botaoStart, INPUT_PULLUP);
-  pinMode(botaoStop, INPUT_PULLUP);
+  pinMode(botaoDesliga, INPUT_PULLUP);
   pinMode(botaoEmerg, INPUT_PULLUP);  // NC → HIGH normal, LOW = emergência
 
   pinMode(K1, OUTPUT);
@@ -38,7 +38,7 @@ void setup() {
 void loop() {
   // Leitura dos botões
   bool startPressionado = (digitalRead(botaoStart) == LOW);
-  bool stopPressionado  = (digitalRead(botaoStop) == LOW);
+  bool desligaPressionado = (digitalRead(botaoDesliga) == LOW);
   bool emergenciaAtiva  = (digitalRead(botaoEmerg) == LOW); // Botão pressionado → emergência
 
   // --- Prioridade total do botão de emergência ---
@@ -79,8 +79,9 @@ void loop() {
   }
 
   // Paragem normal
-  if (stopPressionado && estado != EMERGENCIA) {
+  if (desligaPressionado && estado != EMERGENCIA) {
     desligarTudo();
+    estado = DESLIGADO;  // Permite religar o sistema após desligamento
   }
 }
 
@@ -108,4 +109,5 @@ void desligarTudo() {
   digitalWrite(K1, LOW);
   digitalWrite(K2, LOW);
   digitalWrite(K3, LOW);
+  delay(500);  // Pequeno atraso para evitar religamento imediato
 }
